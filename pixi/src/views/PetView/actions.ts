@@ -20,8 +20,6 @@ export function petViewControl() {
     });
 }
 
-
-
 function playPet(){
     //navigate to games view, add fun points after game
 }

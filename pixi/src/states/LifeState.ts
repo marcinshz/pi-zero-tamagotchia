@@ -11,6 +11,7 @@ type LifeStore = LifeState & {
     feed: () => void;
     kiss: () => void;
     play: () => void;
+    decrease: () => void;
 };
 
 export const lifeStore = createStore<LifeStore>()(
@@ -23,6 +24,11 @@ export const lifeStore = createStore<LifeStore>()(
             feed: () => set(s => ({ food: Math.min(100, s.food + 25) })),
             kiss: () => set(s => ({ love: Math.min(100, s.love + 25) })),
             play: () => set(s => ({ fun: Math.min(100, s.fun + 25) })),
+            decrease: () => set(s => ({
+                fun: Math.min(100, s.fun - 25),
+                love: Math.min(100, s.love - 25),
+                food: Math.min(100, s.food - 25),
+            })),
         }),
         { name: "lifeState" }
     )

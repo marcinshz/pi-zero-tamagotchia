@@ -4,6 +4,7 @@ import {CommunicationView} from "./views/CommunicationView";
 import {DaysView} from "./views/DaysView";
 import {kState} from "./states/k.ts";
 import { mState } from "./states/m.ts";
+import {monitorTime} from "./views/PetView/TimeState.ts";
 
 (async () => {
     const app = new Application();
@@ -18,8 +19,8 @@ import { mState } from "./states/m.ts";
         backgroundColor:'#f8f9fa'
     });
     document.getElementById("pixi-container")!.appendChild(app.canvas);
-    const characterState = mState;
-
+    const characterState = kState;
+    monitorTime();
     // VIEWS
     const petView = await PetView(app.screen.width, app.screen.height, characterState);
     const communicationView = CommunicationView(app.screen.width, app.screen.height);
