@@ -59,7 +59,6 @@ export async function createLifeBars(width: number, height: number): Promise<Con
     );
 
     function render(state: LifeState) {
-        console.log('render', state)
         const values = [state.fun, state.love, state.food];
 
         values.forEach((value, i) => {

@@ -15,6 +15,7 @@ function createColoredContainer(
     bg.drawRoundedRect(0, 0, width, height, 5);
     bg.endFill();
     container.addChild(bg);
+    //TODO migajacy background pending akcji
 
     const text = new Text(textStr, new TextStyle({
         fontFamily: 'monospace',

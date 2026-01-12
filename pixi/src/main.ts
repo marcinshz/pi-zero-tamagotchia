@@ -4,7 +4,7 @@ import {CommunicationView} from "./views/CommunicationView";
 import {DaysView} from "./views/DaysView";
 import {kState} from "./states/k.ts";
 import { mState } from "./states/m.ts";
-import {monitorTime} from "./views/PetView/TimeState.ts";
+import {monitorTime} from "./states/TimeState.ts";
 
 (async () => {
     const app = new Application();
