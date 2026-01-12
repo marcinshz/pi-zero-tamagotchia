@@ -37,9 +37,9 @@ import { mState } from "./states/m.ts";
         views[currentViewIndex].visible = true;
     }
 
-    // Keyboard control: Press "e" to switch views
+    // Keyboard control: Press "d" to switch views
     window.addEventListener("keydown", (event) => {
-        if (event.key === "e" || event.key === "E") {
+        if (event.key === "d") {
             switchToNextView();
         }
     });

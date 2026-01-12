@@ -1,13 +1,12 @@
 import {Container} from "pixi.js";
 import {CharacterState} from "../../states/types.ts";
 import {createLifeBars} from "./LifeBars.ts";
-import {getLifeState} from "../../states/LifeState.ts";
 import {createVideo} from "./Video.ts";
 import {createButtonLabels} from "./ButtonLabels.ts";
 import {createFrame} from "./Frame.ts";
+import {petViewControl} from "./actions.ts";
 
 export async function PetView(width: number, height: number, characterState: CharacterState): Promise<Container> {
-    const lifeState = getLifeState();
     const view = new Container();
 
     // CHARACTER FRAME
@@ -27,12 +26,14 @@ export async function PetView(width: number, height: number, characterState: Cha
     })
 
     // STATE BARS
-    const lifeBars = createLifeBars(width, height, lifeState);
+    const lifeBars = await createLifeBars(width, height);
     view.addChild(lifeBars);
 
     //BUTTON LABELS
     createButtonLabels(view);
 
+    //CONTROLS
+    petViewControl();
 
     return view;
 }

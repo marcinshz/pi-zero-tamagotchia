@@ -1,20 +1,29 @@
-import {LifeState} from "./types.ts";
+import { createStore } from "zustand/vanilla";
+import { persist } from "zustand/middleware";
 
-function initializeLifeState(): LifeState {
-    const lifeState: LifeState = {
-        love: 50,
-        food: 50,
-        fun: 50
-    };
-    localStorage.setItem("lifeState", JSON.stringify(lifeState));
-    return lifeState;
+export interface LifeState {
+    love: number;
+    food: number;
+    fun: number;
 }
 
-export function getLifeState(): LifeState {
-    const lifeState = localStorage.getItem('lifeState');
-    if (lifeState) {
-        return JSON.parse(lifeState);
-    } else {
-        return initializeLifeState();
-    }
-}
+type LifeStore = LifeState & {
+    feed: () => void;
+    kiss: () => void;
+    play: () => void;
+};
+
+export const lifeStore = createStore<LifeStore>()(
+    persist(
+        (set) => ({
+            love: 50,
+            food: 50,
+            fun: 50,
+
+            feed: () => set(s => ({ food: Math.min(100, s.food + 25) })),
+            kiss: () => set(s => ({ love: Math.min(100, s.love + 25) })),
+            play: () => set(s => ({ fun: Math.min(100, s.fun + 25) })),
+        }),
+        { name: "lifeState" }
+    )
+);
