@@ -1,34 +1,36 @@
 import {Application} from "pixi.js";
-import {PetView} from "./views/PetView";
+import {PetView} from "./views/PetView/PetView.ts";
 import {CommunicationView} from "./views/CommunicationView";
 import {DaysView} from "./views/DaysView";
+import {kState} from "./states/k.ts";
+import { mState } from "./states/m.ts";
 
 (async () => {
-    // Create a new application
     const app = new Application();
 
-    // Initialize the application
-    await app.init({background: "#F0EFEB"});
-
-    // Append the application canvas to the document body
+    // APP INIT
+    await app.init(
+    {
+        height: 240, width: 320,  
+        antialias: false,
+        resolution: window.devicePixelRatio,
+        autoDensity: true,
+        backgroundColor:'#f8f9fa'
+    });
     document.getElementById("pixi-container")!.appendChild(app.canvas);
+    const characterState = mState;
 
-    // Create views
-    const petView = PetView(app.screen.width, app.screen.height);
+    // VIEWS
+    const petView = await PetView(app.screen.width, app.screen.height, characterState);
     const communicationView = CommunicationView(app.screen.width, app.screen.height);
     const daysView = DaysView(app.screen.width, app.screen.height);
-
-    // Add all views to stage (initially hidden)
     app.stage.addChild(petView, communicationView, daysView);
-
-    // View management
     const views = [petView, communicationView, daysView];
     let currentViewIndex = 0;
     petView.visible = true;
     communicationView.visible = false;
     daysView.visible = false;
 
-    // Function to switch to next view
     function switchToNextView() {
         views[currentViewIndex].visible = false;
         currentViewIndex = (currentViewIndex + 1) % views.length;
