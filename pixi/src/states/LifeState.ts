@@ -6,6 +6,7 @@ export interface LifeState {
     food: number;
     fun: number;
     actionPending: (() => void) | undefined;
+    actionPendingName: string | undefined;
 }
 
 type LifeStore = LifeState & {
@@ -14,6 +15,7 @@ type LifeStore = LifeState & {
     play: () => void;
     decrease: () => void;
     setActionPending: (actionPending: (() => void) | undefined) => void;
+    setActionPendingName: (actionPendingName: string | undefined) => void;
 };
 
 export const lifeStore = createStore<LifeStore>()(
@@ -23,6 +25,7 @@ export const lifeStore = createStore<LifeStore>()(
             food: 50,
             fun: 50,
             actionPending: undefined,
+            actionPendingName: undefined,
             feed: () => set(s => ({food: Math.min(100, s.food + 25)})),
             kiss: () => set(s => ({love: Math.min(100, s.love + 25)})),
             play: () => set(s => ({fun: Math.min(100, s.fun + 25)})),
@@ -32,6 +35,7 @@ export const lifeStore = createStore<LifeStore>()(
                 food: Math.max(0, s.food - 25),
             })),
             setActionPending: (actionPending) => set(() => ({actionPending})),
+            setActionPendingName: (actionPendingName) => set(() => ({actionPendingName})),
         }),
         {name: "lifeState"}
     )

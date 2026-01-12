@@ -11,10 +11,12 @@ export function petViewControl() {
         switch (event.key) {
             case "a":
                 lifeStoreLocal.setActionPending(lifeStoreLocal.feed)
+                lifeStoreLocal.setActionPendingName('Feed');
                 animationStoreLocal.setNextAnimation(Animations.FEED);
                 break;
             case "q":
                 lifeStoreLocal.setActionPending(lifeStoreLocal.kiss)
+                lifeStoreLocal.setActionPendingName('Kiss');
                 animationStoreLocal.setNextAnimation(Animations.KISS);
                 break;
             case "e":

@@ -19,7 +19,7 @@ import {monitorTime} from "./states/TimeState.ts";
         backgroundColor:'#f8f9fa'
     });
     document.getElementById("pixi-container")!.appendChild(app.canvas);
-    const characterState = kState;
+    const characterState = mState;
     monitorTime();
     // VIEWS
     const petView = await PetView(app.screen.width, app.screen.height, characterState);

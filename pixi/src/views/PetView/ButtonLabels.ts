@@ -1,4 +1,5 @@
 import {Container, Graphics, Text, TextStyle} from "pixi.js";
+import {lifeStore} from "../../states/LifeState.ts";
 
 function createColoredContainer(
     x: number,
@@ -15,7 +16,24 @@ function createColoredContainer(
     bg.drawRoundedRect(0, 0, width, height, 5);
     bg.endFill();
     container.addChild(bg);
-    //TODO migajacy background pending akcji
+
+    let interval: ReturnType<typeof setInterval> | undefined;
+
+    lifeStore.subscribe((state) => {
+        if (state.actionPendingName === textStr) {
+            if (!interval) {
+                interval = setInterval(() => {
+                    bg.alpha = bg.alpha === 1 ? 0.7 : 1;
+                }, 500);
+            }
+        } else {
+            if (interval) {
+                clearInterval(interval);
+                interval = undefined;
+                bg.alpha = 1;
+            }
+        }
+    });
 
     const text = new Text(textStr, new TextStyle({
         fontFamily: 'monospace',

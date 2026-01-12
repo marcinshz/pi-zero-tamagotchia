@@ -64,6 +64,7 @@ export async function createVideo(props: CreateVideoProps, characterState: Chara
         animationStore.getState().animationPlay();
         lifeStore.getState().actionPending?.();
         lifeStore.getState().setActionPending(undefined);
+        lifeStore.getState().setActionPendingName(undefined);
     })
 
     const texture = Texture.from(video);
