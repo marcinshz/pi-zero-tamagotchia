@@ -7,11 +7,11 @@ import {createFrame} from "./Frame.ts";
 import {petViewControl} from "./actions.ts";
 import {animationStore} from "../../states/AnimationState.ts";
 
-export async function PetView(width: number, height: number, characterState: CharacterState): Promise<Container> {
+export async function PetView(characterState: CharacterState): Promise<Container> {
     const view = new Container();
 
     // CHARACTER FRAME
-    await createFrame(view, width);
+    await createFrame(view);
 
     // VIDEO
     await createVideo({
@@ -21,13 +21,13 @@ export async function PetView(width: number, height: number, characterState: Cha
         path: characterState.assetsPath + animationStore.getState().animation,
         anchorX: 0.5,
         anchorY: 0.5,
-        positionX: width / 2,
+        positionX: 160,
         positionY: 90,
         borderRadius: 2
     }, characterState)
 
     // STATE BARS
-    const lifeBars = await createLifeBars(width, height);
+    const lifeBars = await createLifeBars();
     view.addChild(lifeBars);
 
     //BUTTON LABELS

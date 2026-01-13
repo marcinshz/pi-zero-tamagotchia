@@ -1,7 +1,7 @@
-import {CalendarEvent} from "../../states/EventsState.ts";
+import {CalendarEventType} from "../../states/EventsState.ts";
 import {Assets, Container, Sprite, Text} from "pixi.js";
 
-export async function RenderEvent(event:CalendarEvent, view:Container, index:number){
+export async function CalendarEvent(event:CalendarEventType, view:Container, index:number){
     //EVENT BG
     const iconTexture = await Assets.load('assets/event_label.png');
     const iconSprite = new Sprite(iconTexture);
@@ -13,6 +13,7 @@ export async function RenderEvent(event:CalendarEvent, view:Container, index:num
     const date = new Date(event.date);
     const dateString = `${date.getDate()}/${date.getMonth() + 1}`;
 
+    //EVENT TEXT
     const daysViewText = new Text({
         text: dateString + ' ' + event.name,
         style: {

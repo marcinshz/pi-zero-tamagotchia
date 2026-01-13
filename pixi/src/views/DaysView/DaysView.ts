@@ -1,6 +1,6 @@
 import {Assets, Container, Graphics, Sprite} from "pixi.js";
 import {getUpcomingEvents} from "../../states/EventsState.ts";
-import {RenderEvent} from "./RenderEvent.ts";
+import {CalendarEvent} from "./CalendarEvent.ts";
 
 export async function DaysView(): Promise<Container> {
     const view = new Container();
@@ -22,7 +22,7 @@ export async function DaysView(): Promise<Container> {
     view.addChild(iconSprite);
 
     upcomingEvents.forEach((event, index) => {
-        RenderEvent(event, view, index);
+        CalendarEvent(event, view, index);
     })
 
     return view;

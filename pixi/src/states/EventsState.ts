@@ -2,13 +2,13 @@ import {createStore} from "zustand/vanilla";
 import {persist} from "zustand/middleware";
 import eventsData from "../eventsData.json";
 
-export type CalendarEvent = {
+export type CalendarEventType = {
     name: string;
     date: string;
 }
 
 export interface EventState {
-    events: CalendarEvent[];
+    events: CalendarEventType[];
 }
 
 type EventStore = EventState & {

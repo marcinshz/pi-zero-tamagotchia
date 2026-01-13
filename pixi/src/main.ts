@@ -1,10 +1,11 @@
 import {Application} from "pixi.js";
 import {PetView} from "./views/PetView/PetView.ts";
-import {CommunicationView} from "./views/CommunicationView";
+import {EmotionsView} from "./views/EmotionsView/EmotionsView.ts";
 import {DaysView} from "./views/DaysView/DaysView.ts";
 import {kState} from "./states/k.ts";
 import {monitorTime} from "./states/TimeState.ts";
 import {eventStore} from "./states/EventsState.ts";
+import {handleSwitchViews} from "./handleSwitchViews.ts";
 
 (async () => {
     const app = new Application();
@@ -23,8 +24,8 @@ import {eventStore} from "./states/EventsState.ts";
     monitorTime();
     eventStore.getState().importEvents();
     // VIEWS
-    const petView = await PetView(app.screen.width, app.screen.height, characterState);
-    const communicationView = CommunicationView(app.screen.width, app.screen.height);
+    const petView = await PetView(characterState);
+    const communicationView = EmotionsView();
     const daysView = await DaysView();
     app.stage.addChild(petView, communicationView, daysView);
     const views = [petView, communicationView, daysView];
@@ -38,11 +39,5 @@ import {eventStore} from "./states/EventsState.ts";
         currentViewIndex = (currentViewIndex + 1) % views.length;
         views[currentViewIndex].visible = true;
     }
-
-    // Keyboard control: Press "d" to switch views
-    window.addEventListener("keydown", (event) => {
-        if (event.key === "d") {
-            switchToNextView();
-        }
-    });
+    handleSwitchViews(switchToNextView)
 })();
