@@ -1,30 +1,31 @@
 import {Application} from "pixi.js";
 import {PetView} from "./views/PetView/PetView.ts";
 import {CommunicationView} from "./views/CommunicationView";
-import {DaysView} from "./views/DaysView";
+import {DaysView} from "./views/DaysView/DaysView.ts";
 import {kState} from "./states/k.ts";
-import { mState } from "./states/m.ts";
 import {monitorTime} from "./states/TimeState.ts";
+import {eventStore} from "./states/EventsState.ts";
 
 (async () => {
     const app = new Application();
 
     // APP INIT
     await app.init(
-    {
-        height: 240, width: 320,  
-        antialias: false,
-        resolution: window.devicePixelRatio,
-        autoDensity: true,
-        backgroundColor:'#f8f9fa'
-    });
+        {
+            height: 240, width: 320,
+            antialias: false,
+            resolution: window.devicePixelRatio,
+            autoDensity: true,
+            backgroundColor: '#f8f9fa'
+        });
     document.getElementById("pixi-container")!.appendChild(app.canvas);
-    const characterState = mState;
+    const characterState = kState;
     monitorTime();
+    eventStore.getState().importEvents();
     // VIEWS
     const petView = await PetView(app.screen.width, app.screen.height, characterState);
     const communicationView = CommunicationView(app.screen.width, app.screen.height);
-    const daysView = DaysView(app.screen.width, app.screen.height);
+    const daysView = await DaysView();
     app.stage.addChild(petView, communicationView, daysView);
     const views = [petView, communicationView, daysView];
     let currentViewIndex = 0;

@@ -16,9 +16,13 @@ export const timeStore = createStore<TimeStore>()(
             lastDecrease: new Date(),
             decrease: () => set(s => {
                 const now = new Date();
-                if (Math.abs(now.getTime() - new Date(s.lastDecrease).getTime()) > 1800000) {
+                const timePassed = Math.abs(now.getTime() - new Date(s.lastDecrease).getTime());
+                const decreaseCount = Math.floor(timePassed / 1800000);
+                if (decreaseCount) {
                     s.lastDecrease = now;
-                    lifeStore.getState().decrease();
+                    for (let i = decreaseCount; i >= 0; i--) {
+                        lifeStore.getState().decrease();
+                    }
                     return ({lastDecrease: now});
                 }
                 return ({lastDecrease: s.lastDecrease})
@@ -29,7 +33,8 @@ export const timeStore = createStore<TimeStore>()(
 );
 
 export function monitorTime() {
+    timeStore.getState().decrease();
     setInterval(() => {
         timeStore.getState().decrease();
-    }, 600000);
+    }, 60000);
 }
