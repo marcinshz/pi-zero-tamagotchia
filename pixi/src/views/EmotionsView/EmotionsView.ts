@@ -1,5 +1,5 @@
 import {Container, Graphics} from "pixi.js";
-import {Emotion} from "./Emotion.ts";
+import {Emotion} from "../shared/Emotion.ts";
 
 export function EmotionsView(): Container {
     const view = new Container();

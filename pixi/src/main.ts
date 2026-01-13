@@ -6,6 +6,7 @@ import {kState} from "./states/k.ts";
 import {monitorTime} from "./states/TimeState.ts";
 import {eventStore} from "./states/EventsState.ts";
 import {handleSwitchViews} from "./handleSwitchViews.ts";
+import {ReceivedMessagesView} from "./views/ReceivedMessagesView/ReceivedMessagesView.ts";
 
 (async () => {
     const app = new Application();
@@ -26,12 +27,14 @@ import {handleSwitchViews} from "./handleSwitchViews.ts";
     // VIEWS
     const petView = await PetView(characterState);
     const communicationView = EmotionsView();
+    const receivedMessagesView = ReceivedMessagesView();
     const daysView = await DaysView();
-    app.stage.addChild(petView, communicationView, daysView);
-    const views = [petView, communicationView, daysView];
+    app.stage.addChild(petView, communicationView, receivedMessagesView, daysView);
+    const views = [petView, communicationView, receivedMessagesView, daysView];
     let currentViewIndex = 0;
     petView.visible = true;
     communicationView.visible = false;
+    receivedMessagesView.visible = false;
     daysView.visible = false;
 
     function switchToNextView() {
