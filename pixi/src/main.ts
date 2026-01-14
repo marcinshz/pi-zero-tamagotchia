@@ -7,6 +7,7 @@ import {monitorTime} from "./states/TimeState.ts";
 import {eventStore} from "./states/EventsState.ts";
 import {handleSwitchViews} from "./handleSwitchViews.ts";
 import {ReceivedMessagesView} from "./views/ReceivedMessagesView/ReceivedMessagesView.ts";
+import {initializeDB} from "./db.ts";
 
 (async () => {
     const app = new Application();
@@ -23,7 +24,11 @@ import {ReceivedMessagesView} from "./views/ReceivedMessagesView/ReceivedMessage
     document.getElementById("pixi-container")!.appendChild(app.canvas);
     const characterState = kState;
     monitorTime();
-    eventStore.getState().importEvents();
+    const db = initializeDB();
+    if (db) {
+        const calendarEvents = await db.from('calendarEvent').select().then(res => res.data);
+        if (calendarEvents) eventStore.getState().setEvents(calendarEvents);
+    }
     // VIEWS
     const petView = await PetView(characterState);
     const communicationView = EmotionsView();
@@ -42,5 +47,6 @@ import {ReceivedMessagesView} from "./views/ReceivedMessagesView/ReceivedMessage
         currentViewIndex = (currentViewIndex + 1) % views.length;
         views[currentViewIndex].visible = true;
     }
+
     handleSwitchViews(switchToNextView)
 })();

@@ -1,6 +1,5 @@
 import {createStore} from "zustand/vanilla";
 import {persist} from "zustand/middleware";
-import eventsData from "../eventsData.json";
 
 export type CalendarEventType = {
     name: string;
@@ -12,14 +11,14 @@ export interface EventState {
 }
 
 type EventStore = EventState & {
-    importEvents: () => void;
+    setEvents:(events:CalendarEventType[]) => void;
 };
 
 export const eventStore = createStore<EventStore>()(
     persist(
         (set) => ({
             events: [],
-            importEvents: () => set(() => ({events: eventsData}))
+            setEvents:  (events) => set(() => ({events})),
         }),
         {name: "eventState"}
     )
