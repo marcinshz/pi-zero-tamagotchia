@@ -20,6 +20,14 @@ function sendMessage(iconPath: string, db: SupabaseClient) {
     }
 }
 
+let keyDownHandler: ((e: KeyboardEvent) => void) | null = null;
+let keyUpHandler: ((e: KeyboardEvent) => void) | null = null;
+
+export function removeEmotionViewControl() {
+    if (keyDownHandler) window.removeEventListener("keydown", keyDownHandler);
+    if (keyUpHandler) window.removeEventListener("keyup", keyUpHandler);
+}
+
 export async function Emotion(
     view: Container,
     props: EmotionProps,
@@ -46,7 +54,6 @@ export async function Emotion(
     iconSprite.position.set(0, 25);
     container.addChild(iconSprite);
 
-    // overlay "charge"
     const overlay = new Graphics();
     overlay.rect(-40, 10, 80, 80);
     overlay.fill("#000");
@@ -74,16 +81,19 @@ export async function Emotion(
         requestAnimationFrame(animate);
     }
 
-    window.addEventListener("keydown", (e) => {
+    keyDownHandler = (e: KeyboardEvent) => {
         if (e.code !== key || holding) return;
         holding = true;
         startTime = performance.now();
         requestAnimationFrame(animate);
-    });
+    };
 
-    window.addEventListener("keyup", (e) => {
+    keyUpHandler = (e: KeyboardEvent) => {
         if (e.code !== key) return;
         holding = false;
         overlay.alpha = 0;
-    });
+    };
+
+    window.addEventListener("keydown", keyDownHandler);
+    window.addEventListener("keyup", keyUpHandler);
 }
