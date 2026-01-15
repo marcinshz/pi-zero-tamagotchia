@@ -9,7 +9,6 @@ import {animationStore} from "../../states/AnimationState.ts";
 
 export async function PetView(characterState: CharacterState): Promise<Container> {
     const view = new Container();
-
     // CHARACTER FRAME
     await createFrame(view);
 

@@ -26,13 +26,16 @@ import {initializeDB} from "./db.ts";
     monitorTime();
     const db = initializeDB();
     if (db) {
-        const calendarEvents = await db.from('calendarEvent').select().then(res => res.data);
+        const calendarEvents = await db.from('calendarEvent').select().order('date', { ascending: true }).then(res => res.data);
         if (calendarEvents) eventStore.getState().setEvents(calendarEvents);
+    }
+    else{
+        return;
     }
     // VIEWS
     const petView = await PetView(characterState);
-    const communicationView = EmotionsView();
-    const receivedMessagesView = ReceivedMessagesView();
+    const communicationView = EmotionsView(db);
+    const receivedMessagesView = await ReceivedMessagesView(db);
     const daysView = await DaysView();
     app.stage.addChild(petView, communicationView, receivedMessagesView, daysView);
     const views = [petView, communicationView, receivedMessagesView, daysView];
