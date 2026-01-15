@@ -1,3 +1,5 @@
+export const DOUBLE_CLICK_EVENT = "doubleClickD";
+
 export function handleSwitchViews(switchToNextView: () => void) {
     let lastTapTime = 0;
     let keyDownTime = 0;
@@ -33,6 +35,7 @@ export function handleSwitchViews(switchToNextView: () => void) {
         // Logika double tap
         const now = Date.now();
         if (now - lastTapTime < DOUBLE_TAP_DELAY) {
+            window.dispatchEvent(new CustomEvent(DOUBLE_CLICK_EVENT));
             switchToNextView();
             lastTapTime = 0;
         } else {

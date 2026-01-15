@@ -4,7 +4,6 @@ import {createLifeBars} from "./LifeBars.ts";
 import {createVideo} from "./Video.ts";
 import {createButtonLabels} from "./ButtonLabels.ts";
 import {createFrame} from "./Frame.ts";
-import {petViewControl} from "./actions.ts";
 import {animationStore} from "../../states/AnimationState.ts";
 
 export async function PetView(characterState: CharacterState): Promise<Container> {
@@ -31,9 +30,6 @@ export async function PetView(characterState: CharacterState): Promise<Container
 
     //BUTTON LABELS
     createButtonLabels(view);
-
-    //CONTROLS
-    petViewControl();
 
     return view;
 }

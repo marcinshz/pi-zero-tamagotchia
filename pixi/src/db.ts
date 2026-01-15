@@ -8,3 +8,5 @@ export function initializeDB(): SupabaseClient | undefined {
         return createClient(supabaseUrl, supabaseKey)
     }
 }
+
+export const db = initializeDB();

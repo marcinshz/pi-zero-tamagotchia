@@ -1,5 +1,6 @@
 import {Assets, Container, Graphics, Sprite} from "pixi.js";
-import {SupabaseClient} from "@supabase/supabase-js";
+import {db} from "../../db.ts";
+import {DOUBLE_CLICK_EVENT} from "../../handleSwitchViews.ts";
 
 type EmotionProps = {
     key: string;
@@ -8,17 +9,23 @@ type EmotionProps = {
     iconPath: string;
 };
 
-function sendMessage(iconPath: string, db: SupabaseClient) {
+function sendMessage(iconPath: string) {
     if (db) {
         db.from('messages').insert({
             recipient: 1,
             emotion: iconPath,
-            seen: false
         }).then(res => {
             console.log(res)
         })
     }
 }
+
+let blockSend = false;
+
+window.addEventListener(DOUBLE_CLICK_EVENT, () => {
+    blockSend = true;
+    setTimeout(() => blockSend = false, 500);
+});
 
 let keyDownHandler: ((e: KeyboardEvent) => void) | null = null;
 let keyUpHandler: ((e: KeyboardEvent) => void) | null = null;
@@ -31,7 +38,6 @@ export function removeEmotionViewControl() {
 export async function Emotion(
     view: Container,
     props: EmotionProps,
-    db: SupabaseClient,
 ) {
     const {key, positionX, positionY, iconPath} = props;
 
@@ -65,7 +71,7 @@ export async function Emotion(
     const HOLD_TIME = 1000;
 
     function animate() {
-        if (!holding) return;
+        if (!holding || blockSend) return;
 
         const t = performance.now() - startTime;
         const progress = Math.min(t / HOLD_TIME, 1);
@@ -74,7 +80,7 @@ export async function Emotion(
         if (progress === 1) {
             holding = false;
             overlay.alpha = 0;
-            sendMessage(iconPath, db);
+            sendMessage(iconPath);
             return;
         }
 

@@ -1,8 +1,7 @@
 import {Container, Graphics} from "pixi.js";
 import {Emotion} from "./Emotion.ts";
-import {SupabaseClient} from "@supabase/supabase-js";
 
-export function EmotionsView(db:SupabaseClient): Container {
+export function EmotionsView(): Container {
     const view = new Container();
 
     const emotions = [
@@ -18,7 +17,7 @@ export function EmotionsView(db:SupabaseClient): Container {
     view.addChild(background);
 
     emotions.forEach(async (emotion) => {
-        await Emotion(view, emotion, db);
+        await Emotion(view, emotion);
     });
 
     return view;

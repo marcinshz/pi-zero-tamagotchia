@@ -1,16 +1,10 @@
-import {SupabaseClient} from "@supabase/supabase-js";
 import {Assets, Container, Graphics, Sprite} from "pixi.js";
 import {EmotionReceived} from "./EmotionReceived.ts";
+import {db} from "../../db.ts";
 
-export async function ReceivedMessagesView(db: SupabaseClient) {
+export async function ReceivedMessagesView() {
     const view = new Container();
     const userId = 1;
-
-    const receivedMessages = await db
-        .from('messages')
-        .select('emotion, id')
-        .eq('recipient', userId)
-        .eq('seen', false);
 
     const background = new Graphics();
     background.rect(0, 0, 320, 240);
@@ -22,32 +16,37 @@ export async function ReceivedMessagesView(db: SupabaseClient) {
     envelopeSprite.width = 72;
     envelopeSprite.height = 72;
     envelopeSprite.anchor.set(0.5, 0);
-    envelopeSprite.position.set(170, 16);
+    envelopeSprite.position.set(160, 16);
     view.addChild(envelopeSprite);
 
-    if (receivedMessages.data) {
-        showMessagesSequentially(view, receivedMessages.data);
+    if(db){
+        const receivedMessages = await db
+            .from('messages')
+            .select('emotion, id')
+            .eq('recipient', userId)
+        if (receivedMessages.data) {
+            showMessagesSequentially(view, receivedMessages.data);
+        }
+
+        db.channel('messages-realtime')
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'messages',
+                    filter: `recipient=eq.${userId}`
+                },
+                async payload => {
+                    const newMessage = payload.new as { emotion: string; id: number };
+
+                    EmotionReceived({...newMessage}).then(sprite => {
+                        view.addChild(sprite);
+                    });
+                }
+            )
+            .subscribe();
     }
-
-    db.channel('messages-realtime')
-        .on(
-            'postgres_changes',
-            {
-                event: 'INSERT',
-                schema: 'public',
-                table: 'messages',
-                filter: `recipient=eq.${userId}`
-            },
-            payload => {
-                const newMessage = payload.new as { emotion: string; id: number };
-
-                // wyświetl nową emocję
-                EmotionReceived(newMessage.emotion).then(sprite => {
-                    view.addChild(sprite);
-                });
-            }
-        )
-        .subscribe();
 
     return view;
 }
@@ -59,7 +58,7 @@ async function showMessagesSequentially(view: Container, messages: {
     for (let i = 0; i < messages.length; i++) {
         const message = messages[i];
 
-        const emotionReceived = await EmotionReceived(message.emotion);
+        const emotionReceived = await EmotionReceived(message);
         view.addChild(emotionReceived);
 
         await sleep(1000);
