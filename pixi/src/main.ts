@@ -7,13 +7,12 @@ import {monitorTime} from "./states/TimeState.ts";
 import {ReceivedMessagesView} from "./views/ReceivedMessagesView/ReceivedMessagesView.ts";
 import {db} from "./db.ts";
 import {viewStore} from "./states/ViewState.ts";
-import {removePetViewControl} from "./views/PetView/actions.ts";
-import {removeEmotionViewControl} from "./views/EmotionsView/Emotion.ts";
 import {importCalendarEvents} from "./views/DaysView/importCalendarEvents.ts";
 import {createPetViewControls} from "./views/PetView/controls.ts";
 import {createReceivedMessagesViewControls} from "./views/ReceivedMessagesView/controls.ts";
 import {createDaysViewControls} from "./views/DaysView/controls.ts";
 import {mState} from "./states/m.ts";
+import {createEmotionsViewControls} from "./views/EmotionsView/controls.ts";
 
 (async () => {
     const app = new Application();
@@ -36,13 +35,13 @@ import {mState} from "./states/m.ts";
     let activeControlsRemove: (() => void) | undefined;
     const views = [
         async () => await PetView(characterState),
-        () => EmotionsView(),
+        async () => await EmotionsView(),
         async () => await ReceivedMessagesView(),
         async () => await DaysView(),
     ]
     const controls = [
         () => createPetViewControls(switchToNextView),
-        () => createReceivedMessagesViewControls(switchToNextView),
+        () => createEmotionsViewControls(switchToNextView),
         () => createReceivedMessagesViewControls(switchToNextView),
         () => createDaysViewControls(switchToNextView),
     ]
@@ -59,20 +58,17 @@ import {mState} from "./states/m.ts";
         if (activeView) app.stage.removeChild(activeView);
         activeView?.destroy();
         activeView = undefined;
+
         activeControlsRemove?.();
         activeControlsRemove = undefined;
+
         const activeViewIndex = viewStore.getState().activeViewIndex;
-        let nextIndex = 0;
-        if (activeViewIndex === 0) {
-            removePetViewControl();
-            nextIndex = 1;
-        } else if (activeViewIndex === 1) {
-            removeEmotionViewControl();
-            nextIndex = 2;
-        } else if (activeViewIndex === 2) {
+        let nextIndex = (activeViewIndex + 1) % views.length;
+
+        if (activeViewIndex === 2) {
             if (db) await db.from('messages').delete().eq('recipient', 1);
-            nextIndex = 3
         }
+
         viewStore.getState().setActiveView(nextIndex);
     }
 })();

@@ -1,7 +1,7 @@
-import {Container, Graphics} from "pixi.js";
-import {Emotion} from "./Emotion.ts";
+import { Container, Graphics } from "pixi.js";
+import { Emotion } from "./Emotion";
 
-export function EmotionsView(): Container {
+export async function EmotionsView(): Promise<Container> {
     const view = new Container();
 
     const emotions = [
@@ -16,9 +16,7 @@ export function EmotionsView(): Container {
     background.fill("#d8e2c3");
     view.addChild(background);
 
-    emotions.forEach(async (emotion) => {
-        await Emotion(view, emotion);
-    });
+    await Promise.all(emotions.map(e => Emotion(view, e)));
 
     return view;
 }
