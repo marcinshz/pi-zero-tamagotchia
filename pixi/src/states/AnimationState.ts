@@ -5,6 +5,9 @@ export enum Animations {
     IDLE = '/idle.mp4',
     KISS = '/kiss.mp4',
     FEED = '/feed.mp4',
+    HUNGRY = '/hungry.mp4',
+    BORED = '/bored.mp4',
+    LONELY = '/lonely.mp4'
 }
 
 export interface TimeState {

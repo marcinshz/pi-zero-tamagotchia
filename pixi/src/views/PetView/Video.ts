@@ -1,7 +1,8 @@
 import {Container, Graphics, Sprite, Texture} from "pixi.js";
-import {Animations, animationStore} from "../../states/AnimationState.ts";
+import {animationStore} from "../../states/AnimationState.ts";
 import {CharacterState} from "../../states/types.ts";
 import {lifeStore} from "../../states/LifeState.ts";
+import {getIdleAnimation} from "./getIdleAnimation.ts";
 
 type CreateVideoProps = {
     view: Container;
@@ -57,7 +58,7 @@ export async function createVideo(props: CreateVideoProps, characterState: Chara
     video.addEventListener('ended', () => {
         animationStore.getState().animationEnd();
         animationStore.getState().animationChange(animationStore.getState().nextAnimation);
-        animationStore.getState().setNextAnimation(Animations.IDLE);
+        animationStore.getState().setNextAnimation(getIdleAnimation());
     })
 
     video.addEventListener('play', () => {
