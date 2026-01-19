@@ -1,7 +1,7 @@
 import {Container, Graphics, Text, TextStyle} from "pixi.js";
 import {lifeStore} from "../../states/LifeState.ts";
 
-function createColoredContainer(
+export function createColoredContainer(
     x: number,
     y: number,
     width: number,
@@ -50,10 +50,10 @@ function createColoredContainer(
 }
 
 export function createButtonLabels(view: Container) {
-    const kissContainer = createColoredContainer(8, 24, 40, 20, 'Kiss');
-    const feedContainer = createColoredContainer(8, 140, 40, 20, 'Feed');
-    const playContainer = createColoredContainer(272, 24, 40, 20, 'Play');
-    const viewContainer = createColoredContainer(272, 140, 40, 20, 'View');
+    const kissContainer = createColoredContainer(8, 24, 40, 20, 'KISS');
+    const feedContainer = createColoredContainer(8, 140, 40, 20, 'FEED');
+    const playContainer = createColoredContainer(272, 24, 40, 20, 'PLAY');
+    const viewContainer = createColoredContainer(272, 140, 40, 20, 'VIEW');
 
     view.addChild(kissContainer, feedContainer, playContainer, viewContainer);
 }
