@@ -1,4 +1,5 @@
 import { getPlayViewInstance } from "./PlayView";
+import {lifeStore} from "../../states/LifeState.ts";
 
 export function createPlayViewControls(switchToNextView: (viewIndex?: number) => void) {
     const playView = getPlayViewInstance();
@@ -8,6 +9,7 @@ export function createPlayViewControls(switchToNextView: (viewIndex?: number) =>
         if (e.key === "a") {
             playView.jump();
         } else if (e.key === "q") {
+            lifeStore.getState().play();
             playView.startOrRestart();
         } else if (e.key === "e") {
             switchToNextView(0);
