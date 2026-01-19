@@ -11,8 +11,9 @@ import {importCalendarEvents} from "./views/DaysView/importCalendarEvents.ts";
 import {createPetViewControls} from "./views/PetView/controls.ts";
 import {createReceivedMessagesViewControls} from "./views/ReceivedMessagesView/controls.ts";
 import {createDaysViewControls} from "./views/DaysView/controls.ts";
-import {mState} from "./states/m.ts";
 import {createEmotionsViewControls} from "./views/EmotionsView/controls.ts";
+import {createPlayViewControls} from "./views/PlayView/controls.ts";
+import {PlayView} from "./views/PlayView/PlayView.ts";
 
 (async () => {
     const app = new Application();
@@ -27,7 +28,7 @@ import {createEmotionsViewControls} from "./views/EmotionsView/controls.ts";
             backgroundColor: '#f8f9fa'
         });
     document.getElementById("pixi-container")!.appendChild(app.canvas);
-    const characterState = mState;
+    const characterState = kState;
     monitorTime();
     await importCalendarEvents();
     // VIEWS
@@ -38,12 +39,14 @@ import {createEmotionsViewControls} from "./views/EmotionsView/controls.ts";
         async () => await EmotionsView(),
         async () => await ReceivedMessagesView(),
         async () => await DaysView(),
+        async () => await PlayView(),
     ]
     const controls = [
         () => createPetViewControls(switchToNextView),
         () => createEmotionsViewControls(switchToNextView),
         () => createReceivedMessagesViewControls(switchToNextView),
         () => createDaysViewControls(switchToNextView),
+        () => createPlayViewControls(switchToNextView),
     ]
     viewStore.subscribe(async (state) => {
         const view = await views[state.activeViewIndex]();
@@ -54,16 +57,16 @@ import {createEmotionsViewControls} from "./views/EmotionsView/controls.ts";
     })
     viewStore.getState().setActiveView(0);
 
-    async function switchToNextView() {
+    async function switchToNextView(viewIndex?: number) {
         if (activeView) app.stage.removeChild(activeView);
-        activeView?.destroy();
+        const activeViewIndex = viewStore.getState().activeViewIndex;
+        if (activeViewIndex !== 4) activeView?.destroy();
         activeView = undefined;
 
         activeControlsRemove?.();
         activeControlsRemove = undefined;
 
-        const activeViewIndex = viewStore.getState().activeViewIndex;
-        let nextIndex = (activeViewIndex + 1) % views.length;
+        let nextIndex = viewIndex !== undefined ? viewIndex : (activeViewIndex + 1) % (views.length - 1);
 
         if (activeViewIndex === 2) {
             if (db) await db.from('messages').delete().eq('recipient', 1);

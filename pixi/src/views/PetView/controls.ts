@@ -1,9 +1,9 @@
-import { lifeStore } from "../../states/LifeState";
-import { Animations, animationStore } from "../../states/AnimationState";
+import {lifeStore} from "../../states/LifeState";
+import {Animations, animationStore} from "../../states/AnimationState";
 
 export const DOUBLE_CLICK_EVENT = "doubleClickD";
 
-export function createPetViewControls(switchToNextView: () => void) {
+export function createPetViewControls(switchToNextView: (viewIndex?: number) => void) {
     let lastTapTime = 0;
     let keyDownTime = 0;
     let holdTriggered = false;
@@ -40,7 +40,7 @@ export function createPetViewControls(switchToNextView: () => void) {
                 break;
 
             case "e":
-                playPet();
+                switchToNextView(4);
                 break;
 
             case "k":
@@ -74,8 +74,4 @@ export function createPetViewControls(switchToNextView: () => void) {
         window.removeEventListener("keydown", onKeyDown);
         window.removeEventListener("keyup", onKeyUp);
     };
-}
-
-function playPet() {
-    // navigate to games view, add fun points after game
 }
