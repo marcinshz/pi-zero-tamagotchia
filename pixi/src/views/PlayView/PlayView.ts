@@ -1,5 +1,6 @@
-import { Container, Graphics } from "pixi.js";
+import { Container, Graphics, Text } from "pixi.js";
 import { createColoredContainer } from "../PetView/ButtonLabels.ts";
+import {lifeStore} from "../../states/LifeState.ts";
 
 let playViewInstance: PlayViewClass | null = null;
 
@@ -7,19 +8,17 @@ export class PlayViewClass {
     public view: Container;
     public started = false;
 
-    private player = { x: 64, y: 0, vy: 0, jumps: 0, width: 24, height: 24, alive: true };
+    private player = { x: 32, y: 0, vy: 0, jumps: 0, width: 24, height: 24, alive: true };
     private obstacles: Graphics[] = [];
 
-    // ===== PARAMETRY FIZYKI =====
     private gravity = 1.2;
     private jumpForce = 14;
     private doubleJumpForce = 10;
-    private baseSpeed = 3;          // wolniejsza prędkość startowa
+    private baseSpeed = 3;
     private currentSpeed = this.baseSpeed;
-    private maxSpeed = 12;             // maksymalna prędkość
-    private speedIncreasePerSecond = 0.08; // przyrost prędkości na sekundę (bez *60!)
+    private maxSpeed = 12;
+    private speedIncreasePerSecond = 0.08;
 
-    // ===== SPAWN PRZESZKÓD =====
     private spawnTimer = 0;
     private nextSpawnInterval = 100;
     private minSpawnInterval = 50;
@@ -30,7 +29,11 @@ export class PlayViewClass {
 
     private lastTime = performance.now();
     private totalElapsedTime = 0;
-    private softStartTime = 3;           // sekundy łagodnego startu
+    private softStartTime = 3;
+
+    private score = 0;
+    private scoreText!: Text;
+    private recordText!: Text;
 
     constructor() {
         this.view = new Container();
@@ -45,36 +48,36 @@ export class PlayViewClass {
 
         this.view.removeChildren();
 
-        // Tło
         const background = new Graphics();
         background.beginFill(0xd8e2c3);
         background.drawRect(0, 0, WIDTH, HEIGHT);
         background.endFill();
         this.view.addChild(background);
 
-        // Start label
         const startLabel = createColoredContainer(8, 24, 40, 20, 'PLAY');
         this.view.addChild(startLabel);
 
-        // Back label
         const backLabel = createColoredContainer(272, 24, 40, 20, 'BACK');
         this.view.addChild(backLabel);
 
-        // Kontener gry
+        this.scoreText = new Text("Score: 0", { fill: 0x000000, fontSize: 16 });
+        this.scoreText.position.set(4, 56);
+        this.view.addChild(this.scoreText);
+
+        this.recordText = new Text(`Record: ${lifeStore.getState().gameRecord}`, { fill: 0x000000, fontSize: 16 });
+        this.recordText.position.set(230, 56);
+        this.view.addChild(this.recordText);
+
         this.gameContainer = new Container();
         this.gameContainer.y = HEIGHT;
         this.gameContainer.scale.set(SCALE);
         this.view.addChild(this.gameContainer);
 
-        // Gracz
         this.character = new Graphics();
         this.drawPlayerYellow();
         this.gameContainer.addChild(this.character);
 
-        // Pierwsza przeszkoda
         this.spawnObstacle();
-
-        // Start game loop
         requestAnimationFrame(this.gameLoop);
     }
 
@@ -92,7 +95,7 @@ export class PlayViewClass {
         const h = Math.floor(Math.random() * (maxH - minH + 1)) + minH;
 
         const obs = new Graphics();
-        obs.beginFill(0xff0000);
+        obs.beginFill('#6a5fa0');
         obs.drawRect(0, 0, 10, h);
         obs.endFill();
         obs.x = WIDTH_SCALED;
@@ -125,12 +128,18 @@ export class PlayViewClass {
         this.player.vy = 0;
         this.player.jumps = 0;
         this.player.alive = true;
+
         this.obstacles.forEach(obs => obs.destroy());
         this.obstacles = [];
+
         this.currentSpeed = this.baseSpeed;
         this.spawnTimer = 0;
         this.nextSpawnInterval = 100;
         this.totalElapsedTime = 0;
+
+        this.score = 0;
+        this.scoreText.text = "Score: 0";
+        this.recordText.text = "Record: " + lifeStore.getState().gameRecord;
 
         this.drawPlayerYellow();
         this.spawnObstacle();
@@ -212,6 +221,13 @@ export class PlayViewClass {
 
     private killPlayer() {
         this.player.alive = false;
+
+        const finalScore = Math.floor(this.score);
+        if (finalScore > lifeStore.getState().gameRecord) {
+            lifeStore.getState().setGameRecord(finalScore);
+            this.recordText.text = "Record: " + finalScore;
+        }
+
         this.character.clear();
         this.character.beginFill(0xff0000);
         this.character.drawRect(0, 0, this.player.width, this.player.height);
@@ -225,7 +241,9 @@ export class PlayViewClass {
         if (this.started && this.player.alive) {
             this.totalElapsedTime += dt;
 
-            // Łagodny start
+            this.score += dt * 10;
+            this.scoreText.text = "Score: " + Math.floor(this.score);
+
             if (this.totalElapsedTime > this.softStartTime) {
                 this.currentSpeed += this.speedIncreasePerSecond * dt;
                 if (this.currentSpeed > this.maxSpeed) this.currentSpeed = this.maxSpeed;

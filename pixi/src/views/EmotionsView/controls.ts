@@ -1,5 +1,5 @@
-import { db } from "../../db.ts";
-import { emotionStore } from "../../states/EmotionState.ts";
+import {db} from "../../db.ts";
+import {emotionStore} from "../../states/EmotionState.ts";
 
 export const DOUBLE_CLICK_EVENT = "doubleClickD";
 
@@ -18,9 +18,10 @@ let holdTriggered = false;
 const emotionMap = new Map<string, string>();
 
 function sendMessage(iconPath: string) {
-    if (db) {
+    const userId = Number(localStorage.getItem('userId'));
+    if (db && userId !== null) {
         db.from('messages').insert({
-            recipient: 1,
+            recipient: userId === 1 ? 2 : 1,
             emotion: iconPath,
         }).then(res => console.log(res));
     }

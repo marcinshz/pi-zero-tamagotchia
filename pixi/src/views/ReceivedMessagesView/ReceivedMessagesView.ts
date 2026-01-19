@@ -4,7 +4,7 @@ import {db} from "../../db.ts";
 
 export async function ReceivedMessagesView() {
     const view = new Container();
-    const userId = 1;
+    const userId = localStorage.getItem('userId');
 
     const background = new Graphics();
     background.rect(0, 0, 320, 240);

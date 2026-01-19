@@ -1,6 +1,5 @@
 import {Container, Graphics, Sprite, Texture} from "pixi.js";
 import {animationStore} from "../../states/AnimationState.ts";
-import {CharacterState} from "../../states/types.ts";
 import {lifeStore} from "../../states/LifeState.ts";
 import {getIdleAnimation} from "./getIdleAnimation.ts";
 
@@ -16,10 +15,10 @@ type CreateVideoProps = {
     borderRadius?: number;
 }
 
-export async function createVideo(props: CreateVideoProps, characterState: CharacterState) {
+export async function createVideo(props: CreateVideoProps, assetsPath: string) {
     const {view, width, height, anchorX, anchorY, positionX, positionY, borderRadius = 0} = props;
     const video = document.createElement("video");
-    video.src = characterState.assetsPath + animationStore.getState().animation;
+    video.src = assetsPath + animationStore.getState().animation;
     video.loop = false;
     video.muted = true;
     video.autoplay = true;
@@ -42,7 +41,7 @@ export async function createVideo(props: CreateVideoProps, characterState: Chara
     // Subskrypcja animationStore z możliwością odsubskrybowania
     const unsubscribe = animationStore.subscribe(async (state) => {
         if (!state.isPlaying) {
-            video.src = characterState.assetsPath + state.animation;
+            video.src = assetsPath + state.animation;
             await new Promise<void>((resolve, reject) => {
                 video.addEventListener("canplaythrough", async () => {
                     try {

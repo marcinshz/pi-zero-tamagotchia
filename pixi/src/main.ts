@@ -2,7 +2,6 @@ import {Application, Container} from "pixi.js";
 import {PetView} from "./views/PetView/PetView.ts";
 import {EmotionsView} from "./views/EmotionsView/EmotionsView.ts";
 import {DaysView} from "./views/DaysView/DaysView.ts";
-import {kState} from "./states/k.ts";
 import {monitorTime} from "./states/TimeState.ts";
 import {ReceivedMessagesView} from "./views/ReceivedMessagesView/ReceivedMessagesView.ts";
 import {db} from "./db.ts";
@@ -28,14 +27,14 @@ import {PlayView} from "./views/PlayView/PlayView.ts";
             backgroundColor: '#f8f9fa'
         });
     document.getElementById("pixi-container")!.appendChild(app.canvas);
-    const characterState = kState;
     monitorTime();
     await importCalendarEvents();
+    const userId = Number(localStorage.getItem('userId'));
     // VIEWS
     let activeView: Container | undefined;
     let activeControlsRemove: (() => void) | undefined;
     const views = [
-        async () => await PetView(characterState),
+        async () => await PetView(),
         async () => await EmotionsView(),
         async () => await ReceivedMessagesView(),
         async () => await DaysView(),
@@ -72,7 +71,7 @@ import {PlayView} from "./views/PlayView/PlayView.ts";
         let nextIndex = viewIndex !== undefined ? viewIndex : (activeViewIndex + 1) % (views.length - 1);
 
         if (activeViewIndex === 2) {
-            if (db) await db.from('messages').delete().eq('recipient', 1);
+            if (db) await db.from('messages').delete().eq('recipient', userId);
         }
 
         viewStore.getState().setActiveView(nextIndex);
