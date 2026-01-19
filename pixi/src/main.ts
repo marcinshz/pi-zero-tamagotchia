@@ -30,6 +30,7 @@ import {PlayView} from "./views/PlayView/PlayView.ts";
     monitorTime();
     await importCalendarEvents();
     const userId = Number(localStorage.getItem('userId'));
+    if(!userId) return;
     // VIEWS
     let activeView: Container | undefined;
     let activeControlsRemove: (() => void) | undefined;
