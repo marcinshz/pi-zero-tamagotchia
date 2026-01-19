@@ -17,14 +17,15 @@ type CreateVideoProps = {
 }
 
 export async function createVideo(props: CreateVideoProps, characterState: CharacterState) {
-    const {view, path, width, height, anchorX, anchorY, positionX, positionY, borderRadius = 0} = props;
+    const {view, width, height, anchorX, anchorY, positionX, positionY, borderRadius = 0} = props;
     const video = document.createElement("video");
-    video.src = path;
-    video.loop = false
+    video.src = characterState.assetsPath + animationStore.getState().animation;
+    video.loop = false;
     video.muted = true;
     video.autoplay = true;
     video.playsInline = true;
     video.preload = "auto";
+
     await new Promise<void>((resolve, reject) => {
         video.addEventListener("canplaythrough", async () => {
             try {
@@ -38,7 +39,8 @@ export async function createVideo(props: CreateVideoProps, characterState: Chara
         video.load();
     });
 
-    animationStore.subscribe(async (state) => {
+    // Subskrypcja animationStore z możliwością odsubskrybowania
+    const unsubscribe = animationStore.subscribe(async (state) => {
         if (!state.isPlaying) {
             video.src = characterState.assetsPath + state.animation;
             await new Promise<void>((resolve, reject) => {
@@ -53,20 +55,20 @@ export async function createVideo(props: CreateVideoProps, characterState: Chara
                 }, {once: true});
             });
         }
-    })
+    });
 
     video.addEventListener('ended', () => {
         animationStore.getState().animationEnd();
         animationStore.getState().animationChange(animationStore.getState().nextAnimation);
         animationStore.getState().setNextAnimation(getIdleAnimation());
-    })
+    });
 
     video.addEventListener('play', () => {
         animationStore.getState().animationPlay();
         lifeStore.getState().actionPending?.();
         lifeStore.getState().setActionPending(undefined);
         lifeStore.getState().setActionPendingName(undefined);
-    })
+    });
 
     const texture = Texture.from(video);
     const sprite = new Sprite(texture);
@@ -83,4 +85,12 @@ export async function createVideo(props: CreateVideoProps, characterState: Chara
     view.addChild(sprite);
     view.addChild(mask);
     sprite.mask = mask;
+
+    // Zwracamy funkcję cleanup, żeby móc odsubskrybować
+    return () => {
+        unsubscribe();
+        video.pause();
+        video.src = "";
+        video.remove();
+    };
 }

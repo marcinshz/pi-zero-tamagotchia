@@ -8,11 +8,11 @@ import {animationStore} from "../../states/AnimationState.ts";
 
 export async function PetView(characterState: CharacterState): Promise<Container> {
     const view = new Container();
-    // CHARACTER FRAME
+
     await createFrame(view);
 
     // VIDEO
-    await createVideo({
+    const cleanupVideo = await createVideo({
         view,
         width: 128,
         height: 128,
@@ -22,14 +22,17 @@ export async function PetView(characterState: CharacterState): Promise<Container
         positionX: 160,
         positionY: 90,
         borderRadius: 2
-    }, characterState)
+    }, characterState);
 
-    // STATE BARS
     const lifeBars = await createLifeBars();
     view.addChild(lifeBars);
 
-    //BUTTON LABELS
     createButtonLabels(view);
+
+    // zwracamy cleanup wraz z widokiem
+    (view as any).cleanup = () => {
+        cleanupVideo?.();
+    };
 
     return view;
 }

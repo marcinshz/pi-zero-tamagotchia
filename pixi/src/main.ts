@@ -60,6 +60,9 @@ import {PlayView} from "./views/PlayView/PlayView.ts";
     async function switchToNextView(viewIndex?: number) {
         if (activeView) app.stage.removeChild(activeView);
         const activeViewIndex = viewStore.getState().activeViewIndex;
+        if (activeView && (activeView as any).cleanup) {
+            (activeView as any).cleanup();
+        }
         if (activeViewIndex !== 4) activeView?.destroy();
         activeView = undefined;
 
