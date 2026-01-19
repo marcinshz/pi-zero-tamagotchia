@@ -29,13 +29,13 @@ export function createPetViewControls(switchToNextView: (viewIndex?: number) => 
 
             case "a":
                 lifeStoreLocal.setActionPending(lifeStoreLocal.feed);
-                lifeStoreLocal.setActionPendingName("Feed");
+                lifeStoreLocal.setActionPendingName("FEED");
                 animationStoreLocal.setNextAnimation(Animations.FEED);
                 break;
 
             case "q":
                 lifeStoreLocal.setActionPending(lifeStoreLocal.kiss);
-                lifeStoreLocal.setActionPendingName("Kiss");
+                lifeStoreLocal.setActionPendingName("KISS");
                 animationStoreLocal.setNextAnimation(Animations.KISS);
                 break;
 

@@ -60,12 +60,12 @@ export class PlayViewClass {
         const backLabel = createColoredContainer(272, 24, 40, 20, 'BACK');
         this.view.addChild(backLabel);
 
-        this.scoreText = new Text("Score: 0", { fill: 0x000000, fontSize: 16 });
-        this.scoreText.position.set(4, 56);
+        this.scoreText = new Text("Score: 0", { fill: 0x000000, fontSize: 18 });
+        this.scoreText.position.set(8, 56);
         this.view.addChild(this.scoreText);
 
-        this.recordText = new Text(`Record: ${lifeStore.getState().gameRecord}`, { fill: 0x000000, fontSize: 16 });
-        this.recordText.position.set(230, 56);
+        this.recordText = new Text(`Record: ${lifeStore.getState().gameRecord}`, { fill: 0x000000, fontSize: 18 });
+        this.recordText.position.set(206, 56);
         this.view.addChild(this.recordText);
 
         this.gameContainer = new Container();
