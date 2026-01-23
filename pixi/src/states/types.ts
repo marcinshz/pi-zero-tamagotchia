@@ -1,4 +1,4 @@
 export type CharacterState = {
-    name: string;
-    assetsPath: string;
-}
+  name: string;
+  assetsPath: string;
+};
