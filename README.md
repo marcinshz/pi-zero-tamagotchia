@@ -1,4 +1,4 @@
-# 🍽️ Personalized Tamagotchi game
+# Personalized Tamagotchi game
 
 My own take on pet game with offline and online features, meant for two users.
 Created for Raspberry pi zero 2w setup with a 320x240px display and four buttons.
